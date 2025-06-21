@@ -187,16 +187,28 @@
   </footer>
 
   <script>
-    const path = window.location.pathname;
-    const name = decodeURIComponent(path.replace(/\/$/, '').split('/').pop());
+    const path = window.location.pathname.replace(/\/$/, ''); 
+    const segments = path.split('/').filter(seg => seg !== '');
+    // segments 例: ['1310-2025','たなか'] など
+
+    let name = '';
+    // ホスティングベースが「1310-2025」のときは、その次の要素を名前に
+    if (segments[0] === '1310-2025' && segments.length >= 2) {
+      name = decodeURIComponent(segments[1]);
+    }
+    // それ以外（ex.html 直下や別パス）のときは最後の要素を名前に
+    else {
+      name = decodeURIComponent(segments.pop() || '');
+    }
 
     const welcome = document.getElementById('welcome');
-    if (name && name.trim() && name !== 'ex.html') {
+    if (name && name !== 'ex.html') {
       welcome.textContent = `ようこそ “${name}” さん！`;
     } else {
       welcome.textContent = 'ようこそ';
     }
 
+    // 表示アイテム定義
     const hackItems = [
       {
         title: 'フィッシング詐欺',
@@ -219,16 +231,12 @@
     ];
 
     const container = document.getElementById('items');
-
     hackItems.forEach((item, idx) => {
       const card = document.createElement('div');
       card.className = 'item-card ' + (idx % 2 === 0 ? 'left' : 'right');
-
       const imgDiv = document.createElement('div');
       imgDiv.className = 'item-image';
       imgDiv.style.backgroundImage = `url('${item.imageUrl}')`;
-      card.appendChild(imgDiv);
-
       const content = document.createElement('div');
       content.className = 'item-content';
       content.innerHTML = `
@@ -236,7 +244,7 @@
         <p>${item.description}</p>
         <a href="${item.link}" target="_blank" rel="noopener">詳しくはこちら</a>
       `;
-      card.appendChild(content);
+      card.append(imgDiv, content);
       container.appendChild(card);
     });
 
@@ -252,10 +260,10 @@
     function scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
     function scrollToBottom() {
       window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
   </script>
+
 </body>
 </html>
