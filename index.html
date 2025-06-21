@@ -16,14 +16,12 @@
       color: #eee;
       overflow-x: hidden;
     }
-
     body {
       background: linear-gradient(-45deg, #111, #222, #333, #111);
       background-size: 600% 600%;
       animation: backgroundMotion 25s ease infinite;
       background-attachment: fixed;
     }
-
     @keyframes backgroundMotion {
       0% { background-position: 0% 50%; }
       25% { background-position: 50% 100%; }
@@ -31,35 +29,29 @@
       75% { background-position: 50% 0%; }
       100% { background-position: 0% 50%; }
     }
-
-    /* ヘッダー */
     header {
       position: fixed;
       top: 0;
       width: 100%;
-      background: rgba(20, 20, 20, 0.95);
+      background: rgba(20,20,20,0.95);
       padding: 2rem 1rem;
       text-align: center;
       transition: all 0.3s ease;
       z-index: 10;
     }
-
     header.small {
       padding: 0.5rem 1rem;
       font-size: 0.85rem;
     }
-
     header h1 {
       font-size: 2rem;
       transition: font-size 0.3s ease;
     }
-
     main {
       padding-top: 120px;
       position: relative;
       z-index: 1;
     }
-
     #items {
       display: flex;
       flex-direction: column;
@@ -67,10 +59,9 @@
       gap: 3rem;
       padding: 1rem 2rem 6rem;
     }
-
     .item-card {
       display: flex;
-      background: rgba(34, 34, 34, 0.9);
+      background: rgba(34,34,34,0.9);
       border-radius: 0.75rem;
       overflow: hidden;
       width: 85%;
@@ -79,27 +70,18 @@
       box-shadow: 0 0 15px rgba(0,0,0,0.8);
       transition: transform 0.3s, box-shadow 0.3s;
     }
-
     .item-card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.9);
     }
-
-    .item-card.left {
-      align-self: flex-start;
-    }
-
-    .item-card.right {
-      align-self: flex-end;
-    }
-
+    .item-card.left { align-self: flex-start; }
+    .item-card.right { align-self: flex-end; }
     .item-image {
       flex: 0 0 240px;
       background-size: cover;
       background-position: center;
       animation: fadeIn 1s ease both;
     }
-
     .item-content {
       flex: 1;
       padding: 1.5rem;
@@ -107,32 +89,10 @@
       flex-direction: column;
       justify-content: space-between;
     }
-
-    .item-content h2 {
-      margin-bottom: 0.8rem;
-      font-size: 1.6rem;
-      color: #fff;
-    }
-
-    .item-content p {
-      font-size: 1rem;
-      line-height: 1.6;
-      flex: 1;
-    }
-
-    .item-content a {
-      margin-top: 1rem;
-      text-decoration: none;
-      color: #0af;
-      font-weight: bold;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    /* フッター */
+    .item-content h2 { margin-bottom: 0.8rem; font-size: 1.6rem; color: #fff; }
+    .item-content p { font-size: 1rem; line-height: 1.6; flex: 1; }
+    .item-content a { margin-top: 1rem; text-decoration: none; color: #0af; font-weight: bold; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     footer {
       position: fixed;
       bottom: 10px;
@@ -140,7 +100,6 @@
       text-align: center;
       z-index: 10;
     }
-
     .scroll-btn {
       background: #0af;
       color: black;
@@ -150,24 +109,13 @@
       border-radius: 999px;
       font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
       transition: background 0.3s;
     }
-
-    .scroll-btn:hover {
-      background: #08c;
-    }
-
+    .scroll-btn:hover { background: #08c; }
     @media (max-width: 768px) {
-      .item-card {
-        flex-direction: column;
-        align-self: center !important;
-      }
-
-      .item-image {
-        width: 100%;
-        height: 180px;
-      }
+      .item-card { flex-direction: column; align-self: center !important; }
+      .item-image { width: 100%; height: 180px; }
     }
   </style>
 </head>
@@ -187,18 +135,19 @@
   </footer>
 
   <script>
-    const path = window.location.pathname.replace(/\/$/, ''); 
-    const segments = path.split('/').filter(seg => seg !== '');
-    // segments 例: ['1310-2025','たなか'] など
-
+    // まずハッシュを見る
     let name = '';
-    // ホスティングベースが「1310-2025」のときは、その次の要素を名前に
-    if (segments[0] === '1310-2025' && segments.length >= 2) {
-      name = decodeURIComponent(segments[1]);
-    }
-    // それ以外（ex.html 直下や別パス）のときは最後の要素を名前に
-    else {
-      name = decodeURIComponent(segments.pop() || '');
+    if (window.location.hash && window.location.hash.length > 1) {
+      name = decodeURIComponent(window.location.hash.substring(1));
+    } else {
+      // ハッシュがなければ従来のパス取得ロジック
+      const path = window.location.pathname.replace(/\/$/, '');
+      const segs = path.split('/').filter(s => s !== '');
+      if (segs[0] === '1310-2025' && segs.length >= 2) {
+        name = decodeURIComponent(segs[1]);
+      } else {
+        name = decodeURIComponent(segs.pop() || '');
+      }
     }
 
     const welcome = document.getElementById('welcome');
@@ -208,7 +157,7 @@
       welcome.textContent = 'ようこそ';
     }
 
-    // 表示アイテム定義
+    // ハッキング項目一覧
     const hackItems = [
       {
         title: 'フィッシング詐欺',
@@ -249,12 +198,9 @@
     });
 
     window.addEventListener('scroll', () => {
-      const header = document.getElementById('header');
-      if (window.scrollY > 80) {
-        header.classList.add('small');
-      } else {
-        header.classList.remove('small');
-      }
+      const hdr = document.getElementById('header');
+      if (window.scrollY > 80) hdr.classList.add('small');
+      else hdr.classList.remove('small');
     });
 
     function scrollToTop() {
