@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学園祭ハッキング解説</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      color: #eee;
+      overflow-x: hidden;
+    }
+
+    body {
+      background: linear-gradient(-45deg, #111, #222, #333, #111);
+      background-size: 600% 600%;
+      animation: backgroundMotion 25s ease infinite;
+      background-attachment: fixed;
+    }
+
+    @keyframes backgroundMotion {
+      0% { background-position: 0% 50%; }
+      25% { background-position: 50% 100%; }
+      50% { background-position: 100% 50%; }
+      75% { background-position: 50% 0%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ヘッダー */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(20, 20, 20, 0.95);
+      padding: 2rem 1rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    header.small {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      transition: font-size 0.3s ease;
+    }
+
+    main {
+      padding-top: 120px;
+      position: relative;
+      z-index: 1;
+    }
+
+    #items {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+      padding: 1rem 2rem 6rem;
+    }
+
+    .item-card {
+      display: flex;
+      background: rgba(34, 34, 34, 0.9);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      width: 85%;
+      max-width: 1000px;
+      min-height: 260px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.8);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .item-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.9);
+    }
+
+    .item-card.left {
+      align-self: flex-start;
+    }
+
+    .item-card.right {
+      align-self: flex-end;
+    }
+
+    .item-image {
+      flex: 0 0 240px;
+      background-size: cover;
+      background-position: center;
+      animation: fadeIn 1s ease both;
+    }
+
+    .item-content {
+      flex: 1;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .item-content h2 {
+      margin-bottom: 0.8rem;
+      font-size: 1.6rem;
+      color: #fff;
+    }
+
+    .item-content p {
+      font-size: 1rem;
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .item-content a {
+      margin-top: 1rem;
+      text-decoration: none;
+      color: #0af;
+      font-weight: bold;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* フッター */
+    footer {
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      z-index: 10;
+    }
+
+    .scroll-btn {
+      background: #0af;
+      color: black;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      margin: 0 0.5rem;
+      border-radius: 999px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      transition: background 0.3s;
+    }
+
+    .scroll-btn:hover {
+      background: #08c;
+    }
+
+    @media (max-width: 768px) {
+      .item-card {
+        flex-direction: column;
+        align-self: center !important;
+      }
+
+      .item-image {
+        width: 100%;
+        height: 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header id="header">
+    <h1 id="welcome">ようこそ</h1>
+  </header>
+
+  <main>
+    <div id="items"></div>
+  </main>
+
+  <footer>
+    <button class="scroll-btn" onclick="scrollToTop()">↑ 上へ</button>
+    <button class="scroll-btn" onclick="scrollToBottom()">↓ 下へ</button>
+  </footer>
+
+  <script>
+    const path = window.location.pathname;
+    const name = decodeURIComponent(path.replace(/\/$/, '').split('/').pop());
+
+    const welcome = document.getElementById('welcome');
+    if (name && name.trim() && name !== 'ex.html') {
+      welcome.textContent = `ようこそ “${name}” さん！`;
+    } else {
+      welcome.textContent = 'ようこそ';
+    }
+
+    const hackItems = [
+      {
+        title: 'フィッシング詐欺',
+        description: '偽のログインページでID/パスワードを盗む攻撃。対策はSSL証明書確認と公式URLのみの使用。',
+        imageUrl: 'https://raw.githubusercontent.com/ユーザ名/リポジトリ/main/images/phishing.png',
+        link: 'https://ex1.com'
+      },
+      {
+        title: 'クロスサイトスクリプティング (XSS)',
+        description: '悪意あるスクリプトで情報を盗む攻撃。対策は入力値のサニタイズとCSPの適用。',
+        imageUrl: 'https://raw.githubusercontent.com/ユーザ名/リポジトリ/main/images/xss.png',
+        link: 'https://ex2.com'
+      },
+      {
+        title: 'SQLインジェクション',
+        description: '入力値を使って不正にDB操作を行う攻撃。対策はプリペアドステートメントの使用。',
+        imageUrl: 'https://raw.githubusercontent.com/ユーザ名/リポジトリ/main/images/sql.png',
+        link: 'https://ex3.com'
+      }
+    ];
+
+    const container = document.getElementById('items');
+
+    hackItems.forEach((item, idx) => {
+      const card = document.createElement('div');
+      card.className = 'item-card ' + (idx % 2 === 0 ? 'left' : 'right');
+
+      const imgDiv = document.createElement('div');
+      imgDiv.className = 'item-image';
+      imgDiv.style.backgroundImage = `url('${item.imageUrl}')`;
+      card.appendChild(imgDiv);
+
+      const content = document.createElement('div');
+      content.className = 'item-content';
+      content.innerHTML = `
+        <h2>${item.title}</h2>
+        <p>${item.description}</p>
+        <a href="${item.link}" target="_blank" rel="noopener">詳しくはこちら</a>
+      `;
+      card.appendChild(content);
+      container.appendChild(card);
+    });
+
+    window.addEventListener('scroll', () => {
+      const header = document.getElementById('header');
+      if (window.scrollY > 80) {
+        header.classList.add('small');
+      } else {
+        header.classList.remove('small');
+      }
+    });
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function scrollToBottom() {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
